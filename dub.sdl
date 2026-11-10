@@ -1,0 +1,39 @@
+name "clay-selector"
+description "Selector UI simulator: a fuzzy picker laid out with Clay and drawn with raylib"
+authors "Christian Koestlin"
+copyright "Copyright (c) 2026, Christian Koestlin"
+license "MIT"
+toolchainRequirements ldc=">=1.42.0" dmd="no" gdc="no"
+
+dependency "argparse" version="~>2.0.2"
+dependency "fuzzed" path="../14-fuzzed"
+subConfiguration "fuzzed" "library"
+
+configuration "application" {
+    targetType "executable"
+    targetPath "out/main/clay-selector"
+    targetName "clay-selector"
+    sourcePaths "source"
+    importPaths "source"
+    mainSourceFile "source/app.d"
+    // dub passes only .d files from sourcePaths; this also compiles the Clay and stb_truetype implementations.
+    sourceFiles "source/clay_c.c"
+    // The font is embedded, so the binary needs no resource files at runtime.
+    stringImportPaths "fonts"
+    // Without this, dub sees an edit only in vendor/clay as up to date and skips the build.
+    extraDependencyFiles "vendor/clay/clay.h"
+    // ImportC cannot parse the SSE/NEON intrinsic headers Clay would include.
+    dflags "-P-I$PACKAGE_DIR/vendor/clay" "-P-DCLAY_DISABLE_SIMD" platform="ldc"
+    libs "raylib"
+}
+
+configuration "unittest" {
+    targetType "executable"
+    targetPath "out/tests/clay-selector"
+    targetName "clay-selector-tests"
+    sourcePaths "source/selector" "tests"
+    excludedSourceFiles "source/selector/window.d" "source/selector/typeface.d"
+    importPaths "source" "tests"
+    mainSourceFile "tests/runner.d"
+    dependency "unit-threaded" version="~>2.2.6"
+}

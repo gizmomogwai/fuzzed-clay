@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "argparse": {
+      "version": "2.0.2",
+      "sha256": "1p3496rcndgaf68mxizfi4wrkf5frgzzfpp9frlvbjnkinizb2q9"
+    },
+    "colored": {
+      "version": "0.0.34",
+      "sha256": "16frki7dcs1dhxv2dwkc36nbpb5xhqwzkjycjjhflfv7xsbg3dg3"
+    },
+    "tui": {
+      "version": "0.0.7",
+      "sha256": "0azw0aqypsvjibd81yrixfp74i4p7b12f7gmlfmny14c8xxhp1c5"
+    },
+    "unit-threaded": {
+      "version": "2.2.6",
+      "sha256": "1xdrhhqfbzr7ksxxf561a355vshcw0ih9qr2509naixxl28p67r4"
+    }
+  }
+}

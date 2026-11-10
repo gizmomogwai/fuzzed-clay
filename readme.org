@@ -1,0 +1,66 @@
+* clay-selector
+Selector UI simulator: pipe lines in, filter and pick one, it is printed to stdout.
+Written in D, laid out with [[https://www.nicbarker.com/clay][Clay]] and drawn with [[https://www.raylib.com][raylib]].
+Clay, raylib and stb_truetype come in through ImportC (=source/clay_c.c=), including the
+implementations of the header-only Clay and stb_truetype. Text is rendered like CUI's: em-sized,
+gamma-boosted glyphs placed at whole pixels with exact advances and kerning
+(=source/selector/typeface.d=).
+
+** Develop
+#+begin_src sh
+  nix run 'git+https://github.com/gizmomogwai/fuzzed-clay'   # build and run straight from GitHub
+  git submodule update --init                     # Clay source in vendor/clay
+  nix develop                                     # ldc, dub, raylib, stb
+  dub build --compiler=ldc2
+  dub test --compiler=ldc2
+  ls | out/main/clay-selector/clay-selector
+  out/main/clay-selector/clay-selector --demo       # built-in sample lines
+  out/main/clay-selector/clay-selector --demo --query sel --screenshot /tmp/shot.png
+#+end_src
+
+Keys: Up/Down/Ctrl-N/Ctrl-P, PageUp/PageDown, mouse wheel, click or Enter accepts,
+Esc clears the query then quits.
+
+** Options
+Parsed with [[https://code.dlang.org/packages/argparse][argparse]]; see =--help=.
+- =--theme default|zenburn=
+- =--accent NAME=: default theme: neutral, violet, blue, green, amber, orange, coral, rose;
+  zenburn: yellow, cyan, green, orange, red, magenta, blue
+- =--demo=, =--query=, =--down=, =--screenshot FILE.png=
+
+** Font
+The embedded font is Inter (=fonts/=, SIL Open Font License, see =fonts/LICENSE-Inter.txt=).
+=~/.config/picker/font.ttf= replaces it when it exists (TTF or OTF).
+
+** Nix
+=dub-lock.json= is generated with =nix run nixpkgs#dub-to-nix > dub-lock.json=; regenerate it when dub dependencies change.
+
+In home-manager, add the flake as an input and install its package:
+#+begin_src nix
+  inputs.clay-selector.url = "git+https://github.com/gizmomogwai/fuzzed-clay?submodules=1";
+  # ...
+  home.packages = [ inputs.clay-selector.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+#+end_src
+
+** Clay patch for LDC
+=vendor/clay= is on the local branch =ldc-importc=, one commit on top of upstream Clay: the two empty
+declarations in Clay's debug view, =CLAY(CLAY_ID("Clay__DebugViewElementInfoPadding"), { })= and
+=CLAY(CLAY_ID("Clay__DebugViewElementInfoAspectRatio"), { })=, use ={ 0 }= instead of ={ }=.
+Without it LDC (1.42.0, 1.43.0) rejects Clay's implementation with
+=Error: no init symbol for zero-initialized struct=; DMD 2.112.1 compiles it.
+
+The error comes from LDC's code generation (=gen/llvmhelpers.cpp=): LDC emits no init symbol for
+all-zero structs, which every C struct is, but this expression still asks for one. Minimal
+reproduction:
+#+begin_src c
+  typedef struct Decl { float color; } Decl;
+  typedef struct { Decl wrapped; } Wrapper;
+  float f(void) { return ((Wrapper) { { } }).wrapped.color; }
+#+end_src
+An empty ={ }= for a struct inside a compound literal, whose member is then used directly as a
+value. Storing it in a local first, or writing ={ 0 }=, compiles. Clay's =CLAY(...)= macro wraps
+each declaration in exactly this shape.
+- [ ] Push =ldc-importc= to a Clay fork and point =.gitmodules= at it, so clones and =nix run= get the patch.
+- [ ] Report the reproduction to LDC (github.com/ldc-developers/ldc).
+- [ ] Once LDC is fixed: drop the Clay patch.
+- [ ] Once nixpkgs ships LDC 1.43.0 or newer: remove the LDC override from =flake.nix=.
