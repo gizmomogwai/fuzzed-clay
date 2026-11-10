@@ -36,7 +36,7 @@
       # nixpkgs' raylib pulls in GTK (glfw -> libdecor, for Wayland title bars) and pulseaudio.
       # The selector is a borderless X11 window without sound, so build both without them.
       raylib = pkgs:
-        if pkgs.stdenv.hostPlatform.isLinux then
+        (if pkgs.stdenv.hostPlatform.isLinux then
           (pkgs.raylib.override {
             pulseSupport = false;
             glfw = pkgs.glfw.overrideAttrs (old: {
@@ -51,7 +51,10 @@
             propagatedBuildInputs = [ pkgs.libx11 pkgs.libxrandr ];
           }
         else
-          pkgs.raylib;
+          pkgs.raylib).overrideAttrs (old: {
+            # raylib saves a screenshot on F12 by default; F12 toggles Clay's debug view instead.
+            cmakeFlags = old.cmakeFlags ++ [ (pkgs.lib.cmakeBool "SUPPORT_SCREEN_CAPTURE" false) ];
+          });
     in {
       packages = forAllSystems (pkgs: rec {
         # The selector executable, built by dub; dub-lock.json is generated with `nix run nixpkgs#dub-to-nix`.

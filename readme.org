@@ -19,7 +19,7 @@ gamma-boosted glyphs placed at whole pixels with exact advances and kerning
 #+end_src
 
 Keys: Up/Down/Ctrl-N/Ctrl-P, PageUp/PageDown, mouse wheel, click or Enter accepts,
-Esc clears the query then quits.
+Esc clears the query then quits, F12 toggles Clay's debug view.
 
 ** Options
 Parsed with [[https://code.dlang.org/packages/argparse][argparse]]; see =--help=.

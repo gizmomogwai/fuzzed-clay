@@ -28,7 +28,9 @@ private enum FontId : ushort
 private enum fontScale = 16.0 / 13;
 
 /// Font sizes in em per FontId: CUI's text_body, text_sm and text_xs, times fontScale.
-private immutable double[] emSizes = [13 * fontScale, 12 * fontScale, 11 * fontScale];
+private immutable double[] emSizes = [
+    13 * fontScale, 12 * fontScale, 11 * fontScale
+];
 
 private Clay_String clayString(string text)
 {
@@ -294,17 +296,23 @@ final class SelectorWindow
                 selector.cancel;
                 edited;
                 break;
+            case KEY_F12:
+                Clay_SetDebugModeEnabled(!Clay_IsDebugModeEnabled());
+                break;
             default:
                 break;
             }
         }
+        const wheel = GetMouseWheelMoveV();
         // Trackpads report fractions of a notch; keep the remainder for the next frame.
-        wheelRows += GetMouseWheelMove() * 3;
+        wheelRows += wheel.y * 3;
         const rows = cast(int) wheelRows;
         firstVisible -= rows;
         wheelRows -= rows;
         const mouse = GetMousePosition();
         Clay_SetPointerState(Clay_Vector2(mouse.x, mouse.y), IsMouseButtonDown(MOUSE_BUTTON_LEFT));
+        // Scrolls the panes of Clay's debug view under the pointer; the result list scrolls itself above.
+        Clay_UpdateScrollContainers(false, Clay_Vector2(wheel.x * 20, wheel.y * 20), GetFrameTime());
     }
 
     private void updateVisibleRows()
