@@ -43,7 +43,8 @@ In home-manager, add the flake as an input and install its package:
 #+end_src
 
 ** Clay patch for LDC
-=vendor/clay= is on the local branch =ldc-importc=, one commit on top of upstream Clay: the two empty
+=vendor/clay= comes from the fork [[https://github.com/gizmomogwai/clay][gizmomogwai/clay]] (=main=), one commit on top of upstream
+Clay: the two empty
 declarations in Clay's debug view, =CLAY(CLAY_ID("Clay__DebugViewElementInfoPadding"), { })= and
 =CLAY(CLAY_ID("Clay__DebugViewElementInfoAspectRatio"), { })=, use ={ 0 }= instead of ={ }=.
 Without it LDC (1.42.0, 1.43.0) rejects Clay's implementation with
@@ -60,7 +61,6 @@ reproduction:
 An empty ={ }= for a struct inside a compound literal, whose member is then used directly as a
 value. Storing it in a local first, or writing ={ 0 }=, compiles. Clay's =CLAY(...)= macro wraps
 each declaration in exactly this shape.
-- [ ] Push =ldc-importc= to a Clay fork and point =.gitmodules= at it, so clones and =nix run= get the patch.
 - [ ] Report the reproduction to LDC (github.com/ldc-developers/ldc).
 - [ ] Once LDC is fixed: drop the Clay patch.
 - [ ] Once nixpkgs ships LDC 1.43.0 or newer: remove the LDC override from =flake.nix=.

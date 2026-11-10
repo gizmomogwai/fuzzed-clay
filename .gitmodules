@@ -1,3 +1,4 @@
 [submodule "vendor/clay"]
 	path = vendor/clay
-	url = https://github.com/nicbarker/clay
+	url = https://github.com/gizmomogwai/clay.git
+	branch = main
