@@ -145,6 +145,11 @@ final class SelectorWindow
                 : 0));
         InitWindow(760, 560, title.toStringz);
         enforce(IsWindowReady(), "Could not create the raylib window");
+        if (!hidden)
+        {
+            // A terminal-launched macOS process is not activated, so the window would stay behind others.
+            SetWindowFocused();
+        }
         SetExitKey(KEY_NULL);
         SetTargetFPS(60);
 
