@@ -1,4 +1,4 @@
-* clay-selector
+* fuzzed-clay
 Selector UI simulator: pipe lines in, filter and pick one, it is printed to stdout.
 Written in D, laid out with [[https://www.nicbarker.com/clay][Clay]] and drawn with [[https://www.raylib.com][raylib]].
 Clay, raylib and stb_truetype come in through ImportC (=source/clay_c.c=), including the
@@ -13,9 +13,9 @@ gamma-boosted glyphs placed at whole pixels with exact advances and kerning
   nix develop                                     # ldc, dub, raylib, stb
   dub build --compiler=ldc2
   dub test --compiler=ldc2
-  ls | out/main/clay-selector/clay-selector
-  out/main/clay-selector/clay-selector --demo       # built-in sample lines
-  out/main/clay-selector/clay-selector --demo --query sel --screenshot /tmp/shot.png
+  ls | out/main/fuzzed-clay/fuzzed-clay
+  out/main/fuzzed-clay/fuzzed-clay --demo       # built-in sample lines
+  out/main/fuzzed-clay/fuzzed-clay --demo --query sel --screenshot /tmp/shot.png
 #+end_src
 
 Keys: Up/Down/Ctrl-N/Ctrl-P, PageUp/PageDown, mouse wheel, click or Enter accepts,
@@ -37,9 +37,9 @@ The embedded font is Inter (=fonts/=, SIL Open Font License, see =fonts/LICENSE-
 
 In home-manager, add the flake as an input and install its package:
 #+begin_src nix
-  inputs.clay-selector.url = "git+https://github.com/gizmomogwai/fuzzed-clay?submodules=1";
+  inputs.fuzzed-clay.url = "git+https://github.com/gizmomogwai/fuzzed-clay?submodules=1";
   # ...
-  home.packages = [ inputs.clay-selector.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+  home.packages = [ inputs.fuzzed-clay.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 #+end_src
 
 ** Clay patch for LDC

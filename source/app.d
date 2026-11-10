@@ -17,8 +17,8 @@ private string[] sampleLines()
         "source/app.d", "source/selector/model.d", "source/selector/window.d",
         "source/clay_c.c", "tests/runner.d", "tests/selector/model_test.d",
         "flake.nix", "flake.lock", "dub.sdl", "dub.selections.json", "readme.org",
-        "LICENSE", ".gitignore", ".envrc", "out/main/clay-selector/clay-selector",
-        "out/tests/clay-selector/clay-selector-tests",
+        "LICENSE", ".gitignore", ".envrc", "out/main/fuzzed-clay/fuzzed-clay",
+        "out/tests/fuzzed-clay/fuzzed-clay-tests",
     ];
 }
 
@@ -55,7 +55,7 @@ int run(Options options)
         auto lines = options.demo || isatty(0) ? sampleLines : stdin.byLineCopy.array;
         enforce(lines.length != 0, "No input lines");
         auto selector = new Selector(lines);
-        auto window = new SelectorWindow(selector, "clay-selector",
+        auto window = new SelectorWindow(selector, "fuzzed-clay",
                 options.screenshot.length != 0, theme, accent, userFont);
         scope (exit)
         {
@@ -81,7 +81,7 @@ int run(Options options)
     }
     catch (Exception failure)
     {
-        stderr.writeln("clay-selector: ", failure.msg);
+        stderr.writeln("fuzzed-clay: ", failure.msg);
         return 2;
     }
 }

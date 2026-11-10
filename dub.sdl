@@ -1,4 +1,4 @@
-name "clay-selector"
+name "fuzzed-clay"
 description "Selector UI simulator: a fuzzy picker laid out with Clay and drawn with raylib"
 authors "Christian Koestlin"
 copyright "Copyright (c) 2026, Christian Koestlin"
@@ -11,8 +11,8 @@ subConfiguration "fuzzed" "library"
 
 configuration "application" {
     targetType "executable"
-    targetPath "out/main/clay-selector"
-    targetName "clay-selector"
+    targetPath "out/main/fuzzed-clay"
+    targetName "fuzzed-clay"
     sourcePaths "source"
     importPaths "source"
     mainSourceFile "source/app.d"
@@ -29,8 +29,8 @@ configuration "application" {
 
 configuration "unittest" {
     targetType "executable"
-    targetPath "out/tests/clay-selector"
-    targetName "clay-selector-tests"
+    targetPath "out/tests/fuzzed-clay"
+    targetName "fuzzed-clay-tests"
     sourcePaths "source/selector" "tests"
     excludedSourceFiles "source/selector/window.d" "source/selector/typeface.d"
     importPaths "source" "tests"

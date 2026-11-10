@@ -58,8 +58,8 @@
     in {
       packages = forAllSystems (pkgs: rec {
         # The selector executable, built by dub; dub-lock.json is generated with `nix run nixpkgs#dub-to-nix`.
-        clay-selector = pkgs.buildDubPackage {
-          pname = "clay-selector";
+        fuzzed-clay = pkgs.buildDubPackage {
+          pname = "fuzzed-clay";
           version = self.shortRev or "dirty";
           src = self;
           dubLock = ./dub-lock.json;
@@ -76,21 +76,21 @@
           '';
           installPhase = ''
             runHook preInstall
-            install -Dm755 out/main/clay-selector/clay-selector -t $out/bin
+            install -Dm755 out/main/fuzzed-clay/fuzzed-clay -t $out/bin
             # Phobos names libcurl for std.net.curl, which the selector never uses; curl and its TLS stack cost ~25 MB.
-            remove-references-to -t ${pkgs.curl.out} $out/bin/clay-selector
+            remove-references-to -t ${pkgs.curl.out} $out/bin/fuzzed-clay
             runHook postInstall
           '';
           disallowedReferences = [ pkgs.curl.out ];
-          meta.mainProgram = "clay-selector";
+          meta.mainProgram = "fuzzed-clay";
         };
-        default = clay-selector;
+        default = fuzzed-clay;
       });
 
       apps = forAllSystems (pkgs: {
         default = {
           type = "app";
-          program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.clay-selector}/bin/clay-selector";
+          program = "${self.packages.${pkgs.stdenv.hostPlatform.system}.fuzzed-clay}/bin/fuzzed-clay";
         };
       });
 
